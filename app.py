@@ -122,7 +122,7 @@ if submitted:
         for place in attractions[:10]:
             st.write("  ->",place["name"])
 
-    #Displaying Itenary
+    # Displaying Itenary
     st.divider()
     with st.spinner("Generating your travel plan ..."):
         itenary = generate_itenary(travel_details)
