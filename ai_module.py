@@ -8,8 +8,8 @@ def generate_itenary(travel_details):
 
     prompt = f"""
     Create a {travel_details["duration"]} day itinerary for a group of {travel_details["people"]} people.
-    Plan as a professional travel planner specializing in budget-friendly student trips. Moreover add a few tips at the end to make
-    the trip more enjoyable. 
+    Plan as a professional travel planner specializing in budget-friendly student trips. 
+    Moreover add a few tips at the end to make the trip more enjoyable. 
 
     Destination: {travel_details["destination"]}
     Total budget: INR {travel_details["budget"]}
@@ -39,7 +39,6 @@ def generate_itenary(travel_details):
     "days": [
         {{
         "day": 1,
-        "theme": "string",
         "activities": [
             {{
             "time": "Morning / Afternoon / Evening / Night",
@@ -74,7 +73,7 @@ def generate_itenary(travel_details):
                 {"role" : "system", "content" : "You are a travel planning assistant."},
                 {"role" : "user", "content" : prompt}
             ],
-            temperature=0.3
+            temperature=0.6
         )
 
         content = response.choices[0].message.content

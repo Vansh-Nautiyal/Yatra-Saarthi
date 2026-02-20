@@ -18,6 +18,12 @@ st.markdown('''<p style= "text-align : center; font-size: 18px; margin-left: 5%;
             personalized day-wise itineraries with nearby attractions, maps, and travel recommendations.</p><br>
             ''',unsafe_allow_html=True)
 
+if "itenary" not in st.session_state:
+    st.session_state.itenary = None
+
+if "travel_details" not in st.session_state:
+    st.session_state.travel_details = None
+
 def vaildate_input(destination, interest):
     if not (destination):
         st.error("Please enter a destination")
@@ -57,15 +63,18 @@ with center :
 if submitted:
     vaildate_input(destination, interests)
 
+    st.markdown("\n")
     #Geocoding locations
-    lat, lon = geocode_location(destination)
+    with st.spinner("Finding Nearby Locations") :
+      lat, lon = geocode_location(destination)
 
-    #Error handling
-    if (lat is None):
-        st.error("Cannot find the location! Please enter a valid location. ")
-        st.stop()
+      #Error handling
+      if (lat is None):
+          st.error("Cannot find the location! Please enter a valid location. ")
+          st.stop()
 
-    attractions, used_radius = fetch_nearby_attractions(lat, lon,interests)
+      attractions, used_radius = fetch_nearby_attractions(lat, lon,interests)
+    st.success(f"Found {len(attractions)} locations within {used_radius/1000} km")
 
     #adding attractions to travel details
     travel_details = {
@@ -81,6 +90,9 @@ if submitted:
         "budget_per_person" : int(budget/people),
         "nearby_attractions" : attractions
     }
+
+    st.session_state.travel_details = travel_details
+
     st.divider()
     st.markdown(
             '''<h2 style = "text-align : center;">Nearby Locations</h2>''',
@@ -127,143 +139,61 @@ if submitted:
             st.write("  ->",place["name"])
 
     # Displaying Itenary
-    st.divider()
     with st.spinner("Generating your travel plan ..."):
         itenary = generate_itenary(travel_details)
+        if itenary:
+            st.session_state.itenary = itenary
 
+if st.session_state.itenary : 
     st.markdown(
             '''<h2 style = "text-align : center;">Your Day wise Itenary</h2>''',
             unsafe_allow_html=True
         )
-#     itenary = {
-#   "trip_summary": {
-#     "destination": "Manali",
-#     "duration_days": 3,
-#     "total_budget": 15000,
-#     "budget_per_day": 5000,
-#     "budget_per_person": 7500
-#   },
-#   "days": [
-#     {
-#       "day": 1,
-#       "theme": "Local Sightseeing & Mall Road",
-#       "activities": [
-#         {
-#           "time": "Morning",
-#           "activity": "Visit Hadimba Temple and explore nearby cedar forest.",
-#           "location": "Hadimba Temple",
-#           "estimated_cost": 100,
-#           "food_recommendation": "Breakfast at Cafe 1947",
-#           "transport_suggestion": "Walk or take local auto (₹50-100)"
-#         },
-#         {
-#           "time": "Afternoon",
-#           "activity": "Explore Manu Temple and Old Manali streets.",
-#           "location": "Old Manali",
-#           "estimated_cost": 200,
-#           "food_recommendation": "Lunch at Drifters Cafe",
-#           "transport_suggestion": "Local cab (₹200)"
-#         },
-#         {
-#           "time": "Evening",
-#           "activity": "Shopping and leisure walk at Mall Road.",
-#           "location": "Mall Road",
-#           "estimated_cost": 500,
-#           "food_recommendation": "Dinner at Johnson’s Cafe",
-#           "transport_suggestion": "Walk"
-#         }
-#       ],
-#       "daily_estimated_total": 800
-#     },
-#     {
-#       "day": 2,
-#       "theme": "Adventure & Snow Activities",
-#       "activities": [
-#         {
-#           "time": "Morning",
-#           "activity": "Visit Solang Valley for adventure sports like paragliding.",
-#           "location": "Solang Valley",
-#           "estimated_cost": 2500,
-#           "food_recommendation": "Local food stalls",
-#           "transport_suggestion": "Shared cab (₹500 round trip)"
-#         },
-#         {
-#           "time": "Evening",
-#           "activity": "Relax by Beas River and photography session.",
-#           "location": "Beas River",
-#           "estimated_cost": 100,
-#           "food_recommendation": "Dinner near Mall Road",
-#           "transport_suggestion": "Walk or local cab"
-#         }
-#       ],
-#       "daily_estimated_total": 3100
-#     },
-#     {
-#       "day": 3,
-#       "theme": "Nature & Departure",
-#       "activities": [
-#         {
-#           "time": "Morning",
-#           "activity": "Visit Jogini Waterfall and short trek.",
-#           "location": "Jogini Waterfall",
-#           "estimated_cost": 200,
-#           "food_recommendation": "Packed snacks",
-#           "transport_suggestion": "Local cab (₹300)"
-#         },
-#         {
-#           "time": "Afternoon",
-#           "activity": "Last-minute shopping and departure.",
-#           "location": "Mall Road",
-#           "estimated_cost": 500,
-#           "food_recommendation": "Lunch at local dhaba",
-#           "transport_suggestion": "Auto to bus stand"
-#         }
-#       ],
-#       "daily_estimated_total": 700
-#     }
-#   ],
-#   "budget_breakdown": {
-#     "accommodation_total": 6000,
-#     "food_total": 3000,
-#     "transport_total": 2000,
-#     "activities_total": 3000,
-#     "miscellaneous": 1000
-#   },
-#   "travel_tips": [
-#     "Carry warm clothes even in summer.",
-#     "Start early for Solang Valley to avoid crowd.",
-#     "Keep some cash as small shops may not accept UPI."
-#   ]
-# }
+
     left, center, right = st.columns([1,3,1])
     with center : 
-        for day in itenary["days"]:
-            st.markdown(
-                f'''<h3 style = "text-align : center;">Day {day["day"]}</h3>''',
-                unsafe_allow_html=True
-            )
-
+        for day in st.session_state.itenary["days"]:
+            with st.expander(f" Day {day['day']}"):
             #Convert all to markdown html
-            for activity in day["activities"]:
-                st.markdown(
-                f'''<h4>{activity["time"]}</h4>''',
-                unsafe_allow_html=True
-                )
-                st.write(f"{activity["activity"]}")
-                st.write(f"Estimated Cost : {activity["estimated_cost"]}")
-                st.write(f"Food Recommendation : {activity["food_recommendation"]}")
-                st.write(f"Transport Suggestion : {activity["transport_suggestion"]}")
-                st.markdown("\n")
-            st.markdown("\n")
-        st.divider()
+              for activity in day["activities"]:
+                  st.markdown(
+                  f'''<h4>{activity["time"]}</h4>''',
+                  unsafe_allow_html=True
+                  )
+                  st.write(f"{activity["activity"]}")
+                  st.write(f"Estimated Cost : INR {activity["estimated_cost"]}")
+                  st.write(f"Food Recommendation : {activity["food_recommendation"]}")
+                  st.write(f"Transport Suggestion : {activity["transport_suggestion"]}")
 
-        st.markdown("### Download Your Travel Plan")
+                  st.markdown("---")
+              st.markdown(f'''<h4 style = "text-align : center">Daily Estimated total = INR {day["daily_estimated_total"]}</h4>''')
+        
+    with center:
+      st.markdown("### Download Your Travel Plan")
 
-        pdf_bytes = generate_pdf(itenary)
+      pdf_bytes = generate_pdf(st.session_state.itenary)
 
-        st.download_button(
-            label="📄 Download Travel Plan as PDF",
-            data=pdf_bytes,
-            file_name=f"{travel_details['destination']}_travel_plan.pdf",
-            mime="application/pdf"
-        )
+      st.download_button(
+          label="📄 Download Travel Plan as PDF",
+          data=pdf_bytes,
+          file_name=f"{st.session_state.travel_details['destination']}_travel_plan.pdf",
+          mime="application/pdf"
+      )
+      st.divider()
+      #Display budget Card
+      st.markdown('''<h3 style = "text-align = center">Budget Breakdown</h3>''',unsafe_allow_html=True)
+      budget = st.session_state.itenary['budget_breakdown']
+      st.write(f"Accommodation Expenditure : INR {budget['accommodation_total']}")
+      st.write(f"Expense on Food  : INR {budget['food_total']}")
+      st.write(f"Expense on Transport  : INR {budget['transport_total']}")
+      st.write(f"Expense on Activities  : INR {budget['activities_total']}")
+      st.write(f"Miscellaneous Expenditure  : INR {budget['miscellaneous']}")
+      total_cost = budget['accommodation_total']+budget['food_total']+budget['transport_total']+budget['activities_total']+budget['miscellaneous']
+      st.write(f"Total Expense : INR {total_cost}")
+
+      st.markdown("\n")
+      if total_cost < st.session_state.travel_details['budget']:
+          st.write("All such fun within budget")
+      else:
+          st.write("A little overbudget but definitely worth it")
+      
