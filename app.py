@@ -3,6 +3,7 @@ import pandas as pd
 import pydeck as pdk
 from ai_module import generate_itenary
 from map_utils import geocode_location, fetch_nearby_attractions
+from pdf_generator import generate_pdf
 
 #Title of the page
 st.markdown(
@@ -13,6 +14,9 @@ st.set_page_config(
     page_title="AI Travel Planner",
     layout="wide"
 )
+st.markdown('''<p style= "text-align : center; font-size: 18px; margin-left: 5%; margin-right : 5%;padding-bottom:20px;">Smart AI-powered trip planning for students — generate budget-friendly, 
+            personalized day-wise itineraries with nearby attractions, maps, and travel recommendations.</p><br>
+            ''',unsafe_allow_html=True)
 
 def vaildate_input(destination, interest):
     if not (destination):
@@ -48,7 +52,7 @@ with center :
                                         "Luxury"
                                     ])
         
-        submitted = st.form_submit_button("Generate Travel Plan")
+        submitted = st.form_submit_button("Generate Travel Plan",use_container_width=True)
 
 if submitted:
     vaildate_input(destination, interests)
@@ -126,10 +130,111 @@ if submitted:
     st.divider()
     with st.spinner("Generating your travel plan ..."):
         itenary = generate_itenary(travel_details)
+
     st.markdown(
             '''<h2 style = "text-align : center;">Your Day wise Itenary</h2>''',
             unsafe_allow_html=True
         )
+#     itenary = {
+#   "trip_summary": {
+#     "destination": "Manali",
+#     "duration_days": 3,
+#     "total_budget": 15000,
+#     "budget_per_day": 5000,
+#     "budget_per_person": 7500
+#   },
+#   "days": [
+#     {
+#       "day": 1,
+#       "theme": "Local Sightseeing & Mall Road",
+#       "activities": [
+#         {
+#           "time": "Morning",
+#           "activity": "Visit Hadimba Temple and explore nearby cedar forest.",
+#           "location": "Hadimba Temple",
+#           "estimated_cost": 100,
+#           "food_recommendation": "Breakfast at Cafe 1947",
+#           "transport_suggestion": "Walk or take local auto (₹50-100)"
+#         },
+#         {
+#           "time": "Afternoon",
+#           "activity": "Explore Manu Temple and Old Manali streets.",
+#           "location": "Old Manali",
+#           "estimated_cost": 200,
+#           "food_recommendation": "Lunch at Drifters Cafe",
+#           "transport_suggestion": "Local cab (₹200)"
+#         },
+#         {
+#           "time": "Evening",
+#           "activity": "Shopping and leisure walk at Mall Road.",
+#           "location": "Mall Road",
+#           "estimated_cost": 500,
+#           "food_recommendation": "Dinner at Johnson’s Cafe",
+#           "transport_suggestion": "Walk"
+#         }
+#       ],
+#       "daily_estimated_total": 800
+#     },
+#     {
+#       "day": 2,
+#       "theme": "Adventure & Snow Activities",
+#       "activities": [
+#         {
+#           "time": "Morning",
+#           "activity": "Visit Solang Valley for adventure sports like paragliding.",
+#           "location": "Solang Valley",
+#           "estimated_cost": 2500,
+#           "food_recommendation": "Local food stalls",
+#           "transport_suggestion": "Shared cab (₹500 round trip)"
+#         },
+#         {
+#           "time": "Evening",
+#           "activity": "Relax by Beas River and photography session.",
+#           "location": "Beas River",
+#           "estimated_cost": 100,
+#           "food_recommendation": "Dinner near Mall Road",
+#           "transport_suggestion": "Walk or local cab"
+#         }
+#       ],
+#       "daily_estimated_total": 3100
+#     },
+#     {
+#       "day": 3,
+#       "theme": "Nature & Departure",
+#       "activities": [
+#         {
+#           "time": "Morning",
+#           "activity": "Visit Jogini Waterfall and short trek.",
+#           "location": "Jogini Waterfall",
+#           "estimated_cost": 200,
+#           "food_recommendation": "Packed snacks",
+#           "transport_suggestion": "Local cab (₹300)"
+#         },
+#         {
+#           "time": "Afternoon",
+#           "activity": "Last-minute shopping and departure.",
+#           "location": "Mall Road",
+#           "estimated_cost": 500,
+#           "food_recommendation": "Lunch at local dhaba",
+#           "transport_suggestion": "Auto to bus stand"
+#         }
+#       ],
+#       "daily_estimated_total": 700
+#     }
+#   ],
+#   "budget_breakdown": {
+#     "accommodation_total": 6000,
+#     "food_total": 3000,
+#     "transport_total": 2000,
+#     "activities_total": 3000,
+#     "miscellaneous": 1000
+#   },
+#   "travel_tips": [
+#     "Carry warm clothes even in summer.",
+#     "Start early for Solang Valley to avoid crowd.",
+#     "Keep some cash as small shops may not accept UPI."
+#   ]
+# }
     left, center, right = st.columns([1,3,1])
     with center : 
         for day in itenary["days"]:
@@ -150,3 +255,15 @@ if submitted:
                 st.write(f"Transport Suggestion : {activity["transport_suggestion"]}")
                 st.markdown("\n")
             st.markdown("\n")
+        st.divider()
+
+        st.markdown("### Download Your Travel Plan")
+
+        pdf_bytes = generate_pdf(itenary)
+
+        st.download_button(
+            label="📄 Download Travel Plan as PDF",
+            data=pdf_bytes,
+            file_name=f"{travel_details['destination']}_travel_plan.pdf",
+            mime="application/pdf"
+        )

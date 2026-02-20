@@ -1,14 +1,15 @@
-from google import genai
+from groq import Groq
 import streamlit as st
 import json
 
 def generate_itenary(travel_details):
 
-    client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
+    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
     prompt = f"""
     Create a {travel_details["duration"]} day itinerary for a group of {travel_details["people"]} people.
-    Plan as a professional travel planner specializing in budget-friendly student trips.
+    Plan as a professional travel planner specializing in budget-friendly student trips. Moreover add a few tips at the end to make
+    the trip more enjoyable. 
 
     Destination: {travel_details["destination"]}
     Total budget: INR {travel_details["budget"]}
@@ -21,19 +22,84 @@ def generate_itenary(travel_details):
     - Return ONLY valid JSON
     - No markdown
     - No explanation text
+    - Do NOT use backticks
+    - Do NOT add text before or after JSON
+
+    JSON Format -
+    Return JSON strictly in this format:
+
+    {{
+    "trip_summary": {{
+        "destination": "string",
+        "duration_days": number,
+        "total_budget": number,
+        "budget_per_day": number,
+        "budget_per_person": number
+    }},
+    "days": [
+        {{
+        "day": 1,
+        "theme": "string",
+        "activities": [
+            {{
+            "time": "Morning / Afternoon / Evening / Night",
+            "activity": "Detailed description of activity",
+            "location": "Place name",
+            "estimated_cost": number,
+            "food_recommendation": "Food or restaurant suggestion",
+            "transport_suggestion": "How to reach / travel suggestion"
+            }}
+        ],
+        "daily_estimated_total": number
+        }}
+    ],
+    "budget_breakdown": {{
+        "accommodation_total": number,
+        "food_total": number,
+        "transport_total": number,
+        "activities_total": number,
+        "miscellaneous": number
+    }},
+    "travel_tips": [
+        "Tip 1",
+        "Tip 2"
+    ]
+    }}
     """
 
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=prompt,
-        config={
-            "response_mime_type": "application/json",
-            "temperature": 0.3
-        }
-    )
+    try :
+        response = client.chat.completions.create(
+            model = "llama-3.3-70b-versatile",
+            messages=[
+                {"role" : "system", "content" : "You are a travel planning assistant."},
+                {"role" : "user", "content" : prompt}
+            ],
+            temperature=0.3
+        )
 
-    try:
-        return json.loads(response.text)
+        content = response.choices[0].message.content
+        return json.loads(content)
+    
     except json.JSONDecodeError:
-        st.error("AI returned invalid JSON. Please try again.")
+        st.error("AI JSON Decoding Failed !. Please try again")
         return None
+    
+    except Exception as e:
+        st.error(f"Groq API error : {str(e)}")
+        return None
+
+
+    # response = client.models.generate_content(
+    #     model="gemini-2.0-flash",
+    #     contents=prompt,
+    #     config={
+    #         "response_mime_type": "application/json",
+    #         "temperature": 0.3
+    #     }
+    # )
+
+    # try:
+    #     return json.loads(response.text)
+    # except json.JSONDecodeError:
+    #     st.error("AI returned invalid JSON. Please try again.")
+    #     return None
