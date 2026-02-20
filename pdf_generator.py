@@ -50,7 +50,7 @@ def generate_pdf(itinerary):
     elements.append(Paragraph(title, title_style))
     elements.append(Spacer(1, 0.3 * inch))
 
-    # ---------- DAYWISE CONTENT ----------
+    # ---------- DAYWISE CONTENT ------------
     for day in itinerary["days"]:
         # Day Header
         day_header = f"Day {day['day']}"
