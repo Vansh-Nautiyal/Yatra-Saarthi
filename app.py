@@ -136,7 +136,7 @@ if submitted:
         st.markdown("\n")
         st.subheader("List of nearby attractions")
         for place in attractions[:10]:
-            st.write("  ->",place["name"])
+            st.write("->   ",place["name"])
 
     # Displaying Itenary
     with st.spinner("Generating your travel plan ..."):
@@ -157,16 +157,22 @@ if st.session_state.itenary :
             #Convert all to markdown html
               for activity in day["activities"]:
                   st.markdown(
-                  f'''<h4>{activity["time"]}</h4>''',
+                  f'''<h3 style = "text-align:center;">{activity["time"]}</h3><br>''',
                   unsafe_allow_html=True
                   )
-                  st.write(f"{activity["activity"]}")
-                  st.write(f"Estimated Cost : INR {activity["estimated_cost"]}")
-                  st.write(f"Food Recommendation : {activity["food_recommendation"]}")
-                  st.write(f"Transport Suggestion : {activity["transport_suggestion"]}")
+                  st.markdown(f'''<h4 style = "text-align : center;">{activity["activity"]}</h4>''', unsafe_allow_html=True)
+                  st.markdown(f'''<div>
+                        <ul>
+                            <li>Estimated Cost : INR {activity["estimated_cost"]}</li>
+                            <li>Food Recommendation : {activity["food_recommendation"]}</li>
+                            <li>Transport Suggestion : {activity["transport_suggestion"]}</li>
+                        </ul>
+                    </div>
+                    ''', 
+                  unsafe_allow_html=True)
 
                   st.markdown("---")
-              st.markdown(f'''<h4 style = "text-align : center">Daily Estimated total = INR {day["daily_estimated_total"]}</h4>''')
+              st.markdown(f'''<h4 style = "text-align : center;">Daily Estimated total = INR {day["daily_estimated_total"]}</h4>''',unsafe_allow_html=True)
         
     with center:
       st.markdown("### Download Your Travel Plan")
@@ -181,19 +187,28 @@ if st.session_state.itenary :
       )
       st.divider()
       #Display budget Card
-      st.markdown('''<h3 style = "text-align = center">Budget Breakdown</h3>''',unsafe_allow_html=True)
+      st.markdown('''<h3 style = "text-align = center;">Budget Breakdown</h3>''',unsafe_allow_html=True)
       budget = st.session_state.itenary['budget_breakdown']
-      st.write(f"Accommodation Expenditure : INR {budget['accommodation_total']}")
-      st.write(f"Expense on Food  : INR {budget['food_total']}")
-      st.write(f"Expense on Transport  : INR {budget['transport_total']}")
-      st.write(f"Expense on Activities  : INR {budget['activities_total']}")
-      st.write(f"Miscellaneous Expenditure  : INR {budget['miscellaneous']}")
       total_cost = budget['accommodation_total']+budget['food_total']+budget['transport_total']+budget['activities_total']+budget['miscellaneous']
-      st.write(f"Total Expense : INR {total_cost}")
+
+      st.markdown(f'''<div>
+                        <ul>
+                            <li>Accommodation Expenditure : INR {budget['accommodation_total']}</li>
+                            <li>"Expense on Food  : INR {budget['food_total']}</li>
+                            <li>"Expense on Transport  : INR {budget['transport_total']}</li>
+                            <li>"Expense on Activities  : INR {budget['activities_total']}</li>
+                            <li>"Miscellaneous Expenditure  : INR {budget['miscellaneous']}</li>
+                            <li><b>Total Expense : INR {total_cost}</b></li>
+                        </ul>
+                    </div>
+                    ''', 
+                  unsafe_allow_html=True)
 
       st.markdown("\n")
       if total_cost < st.session_state.travel_details['budget']:
-          st.write("All such fun within budget")
+          st.markdown('''<h4 style = "text-align : center;"> All such fun, that too within budget. Enjoy Your Trip </h4>''',unsafe_allow_html=True)
+      elif total_cost == st.session_state.travel_details['budget']:
+          st.markdown('''<h4 style = "text-align : center;"> Tight Budget but definitely worth to try. Enjoy Your Trip </h4>''',unsafe_allow_html=True)
       else:
-          st.write("A little overbudget but definitely worth it")
+          st.markdown('''<h4 style = "text-align : center;"> A little overbudget, but definitely worth it. Enjoy Your Trip  </h4>''',unsafe_allow_html=True)
       
