@@ -86,19 +86,3 @@ def generate_itenary(travel_details):
     except Exception as e:
         st.error(f"Groq API error : {str(e)}")
         return None
-
-
-    # response = client.models.generate_content(
-    #     model="gemini-2.0-flash",
-    #     contents=prompt,
-    #     config={
-    #         "response_mime_type": "application/json",
-    #         "temperature": 0.3
-    #     }
-    # )
-
-    # try:
-    #     return json.loads(response.text)
-    # except json.JSONDecodeError:
-    #     st.error("AI returned invalid JSON. Please try again.")
-    #     return None
