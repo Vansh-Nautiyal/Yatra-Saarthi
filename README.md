@@ -50,3 +50,125 @@ It generates personalized, budget-friendly itineraries using Large Language Mode
 | Pandas | Data handling |
 
 Dependencies (from `requirements.txt`):
+
+---
+
+## 📂 Project Structure
+
+```
+AI-Travel-Planner/
+│
+├── app.py                # Main Streamlit application
+├── ai_module.py          # Groq LLM integration logic
+├── map_utils.py          # OpenStreetMap & Overpass API utilities
+├── pdf_generator.py      # PDF generation using ReportLab
+├── requirements.txt      # Project dependencies
+└── .streamlit/
+    └── config.toml       # Theme configuration (optional)
+```
+
+---
+
+## ⚙️ Local Setup Instructions
+
+### 1️) Clone the Repository
+
+```bash
+git clone https://github.com/your-username/AI-Travel-Planner.git
+cd AI-Travel-Planner
+```
+
+### 2️) Create and Activate Virtual Environment
+
+**Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Mac/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3️) Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4️) Configure API Key
+
+Create a folder named:
+
+```
+.streamlit
+```
+
+Inside it, create:
+
+```
+secrets.toml
+```
+
+Add your Groq API key:
+
+```toml
+GROQ_API_KEY = "your_actual_groq_api_key"
+```
+
+### 5️) Run the Application
+
+```bash
+streamlit run app.py
+```
+
+The app will open in your browser at:
+
+```
+http://localhost:8501
+```
+
+---
+
+## ☁️ Deployment (Streamlit Cloud)
+
+1. Push your project to GitHub
+2. Go to https://share.streamlit.io
+3. Connect your repository
+4. Select:
+   - Branch: `main`
+   - Main file: `app.py`
+5. Add your `GROQ_API_KEY` in **App Settings → Secrets**
+6. Deploy
+
+Streamlit Cloud will automatically rebuild the app whenever new commits are pushed to the selected branch.
+
+---
+
+##  Demo Usage Limitation
+
+The deployed demo version limits itinerary generation to **3 uses per session** to manage API usage and prevent misuse.
+
+---
+
+##  Future Enhancements
+
+- User authentication & login system
+- Trip history storage using database
+- Smarter budget optimization engine
+- API response caching for faster performance
+- Multi-language itinerary generation
+- Personalized recommendation engine
+
+---
+
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+You are free to use, modify, and distribute this project with proper attribution.
+
+See the `LICENSE` file for more details.
