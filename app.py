@@ -114,7 +114,7 @@ if submitted:
     vaildate_input(destination, interests)
 
     #Session stops when the demo usage limit is reached
-    if st.session_state.usage_count == 3:
+    if st.session_state.usage_count >= 3:
         st.warning("Demo Usage Limit Reached ! (3 uses)")
         st.stop()
 
