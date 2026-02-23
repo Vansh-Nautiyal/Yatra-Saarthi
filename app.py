@@ -72,7 +72,8 @@ st.markdown(
 st.markdown('''<p style= "text-align : center; font-size: 22px; font-family : Aparajita;margin-left: 5%; margin-right : 5%;padding-bottom:20px;">
             Plan smarter journeys with AI — generate personalized, 
             budget-friendly student itineraries powered by 
-            real-time location data and interactive maps.</p><br>
+            real-time location data and interactive maps.
+            <br>This is currently a demo version - it is limited to 3 uses per session.</p><br>
             ''',unsafe_allow_html=True)
 
 if "itenary" not in st.session_state:
