@@ -165,7 +165,7 @@ The deployed demo version limits itinerary generation to **3 uses per session** 
 ---
 
 
-## 📜 License
+##  License
 
 This project is licensed under the **MIT License**.
 
