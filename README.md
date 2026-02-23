@@ -1,4 +1,4 @@
-# 🌍 Yatra Saarthi – AI Student Travel Planner
+#  Yatra Saarthi – AI Student Travel Planner
 
 Yatra Saarthi is an AI-powered travel planning web application designed specifically for students.  
 It generates personalized, budget-friendly itineraries using Large Language Models, real-time location data, and interactive maps.
