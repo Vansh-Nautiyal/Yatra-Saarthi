@@ -2,7 +2,7 @@ from groq import Groq
 import streamlit as st
 import json
 
-def generate_itenary(travel_details):
+def generate_itinerary(travel_details):
 
     client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 

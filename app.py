@@ -1,7 +1,7 @@
 import streamlit as st 
 import pandas as pd
 import pydeck as pdk
-from ai_module import generate_itenary
+from ai_module import generate_itinerary
 from map_utils import geocode_location, fetch_nearby_attractions
 from pdf_generator import generate_pdf
 
@@ -76,8 +76,8 @@ st.markdown('''<p style= "text-align : center; font-size: 22px; font-family : Ap
             <br>This is currently a demo version - it is limited to 3 uses per session.</p><br>
             ''',unsafe_allow_html=True)
 
-if "itenary" not in st.session_state:
-    st.session_state.itenary = None
+if "itinerary" not in st.session_state:
+    st.session_state.itinerary = None
 
 if "travel_details" not in st.session_state:
     st.session_state.travel_details = None
@@ -194,22 +194,22 @@ if submitted:
         for place in attractions[:10]:
             st.write("->   ",place["name"])
 
-    # Displaying Itenary
+    # Displaying itinerary
     with st.spinner("Generating your travel plan ..."):
-        itenary = generate_itenary(travel_details)
-        if itenary:
-            st.session_state.itenary = itenary
+        itinerary = generate_itinerary(travel_details)
+        if itinerary:
+            st.session_state.itinerary = itinerary
             st.session_state.usage_count += 1
 
-if st.session_state.itenary : 
+if st.session_state.itinerary : 
     st.markdown(
-            '''<h2 style = "text-align : center;">Your Day wise Itenary</h2>''',
+            '''<h2 style = "text-align : center;">Your Day wise itinerary</h2>''',
             unsafe_allow_html=True
         )
 
     left, center, right = st.columns([1,3,1])
     with center : 
-        for day in st.session_state.itenary["days"]:
+        for day in st.session_state.itinerary["days"]:
             with st.expander(f" Day {day['day']}"):
             #Convert all to markdown html
               for activity in day["activities"]:
@@ -235,7 +235,7 @@ if st.session_state.itenary :
       st.divider()
       #Display budget Card
       st.markdown('''<h2 style = "text-align : center;">Budget Breakdown</h2>''',unsafe_allow_html=True)
-      budget = st.session_state.itenary['budget_breakdown']
+      budget = st.session_state.itinerary['budget_breakdown']
       total_cost = budget['accommodation_total']+budget['food_total']+budget['transport_total']+budget['activities_total']+budget['miscellaneous']
 
       st.markdown(f'''<div>
@@ -251,7 +251,7 @@ if st.session_state.itenary :
                     ''', 
                   unsafe_allow_html=True)
 
-      pdf_bytes = generate_pdf(st.session_state.itenary)
+      pdf_bytes = generate_pdf(st.session_state.itinerary)
 
       st.markdown("\n")
       if total_cost < st.session_state.travel_details['budget']:
