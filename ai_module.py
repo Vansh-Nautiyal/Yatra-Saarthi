@@ -3,8 +3,14 @@ import streamlit as st
 import json
 
 def generate_itinerary(travel_details):
+    api_key = st.secrets.get("GROQ_API_KEY")
 
-    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+    if not api_key:
+        st.error("⚠️ API key not found.")
+        st.info("Please add your own API key in `.streamlit/secrets.toml` to use the AI itinerary generator.")
+        st.stop()
+
+    client = Groq(api_key=api_key)
 
     prompt = f"""
     Create a {travel_details["duration"]} day itinerary for a group of {travel_details["people"]} people.
