@@ -38,8 +38,6 @@ INTEREST_TAG = {
     ]
 }
 def geocode_location(place):
-    st.write(response.status_code)
-    st.write(response.text)
     url = "https://nominatim.openstreetmap.org/search"
     parameters = {
         "q" : place,
