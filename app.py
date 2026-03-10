@@ -60,6 +60,7 @@ st.markdown('''
                     color: white;
                     border-radius: 8px;
                 }
+                
 
             </style>
             ''', unsafe_allow_html=True)
