@@ -122,15 +122,14 @@ if submitted:
 
     st.markdown("\n")
     #Geocoding locations
-    with st.spinner("Finding Nearby Locations") :
-      lat, lon = geocode_location(destination)
+    lat, lon = geocode_location(destination)
 
       #Error handling
-      if (lat is None):
-          st.error("Cannot find the location! Please enter a valid location. ")
-          st.stop()
-
-      attractions, used_radius = fetch_nearby_attractions(lat, lon,interests)
+    if (lat is None):
+        st.error("Cannot find the location! Please enter a valid location. ")
+        st.stop()
+    with st.spinner("Finding Nearby Locations") :
+        attractions, used_radius = fetch_nearby_attractions(lat, lon,interests)
     st.success(f"Found {len(attractions)} locations within {used_radius/1000} km")
 
     #adding attractions to travel details
