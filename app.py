@@ -241,10 +241,10 @@ if st.session_state.itinerary :
       st.markdown(f'''<div>
                         <ul>
                             <li>Accommodation Expenditure : INR {budget['accommodation_total']}</li>
-                            <li>"Expense on Food  : INR {budget['food_total']}</li>
-                            <li>"Expense on Transport  : INR {budget['transport_total']}</li>
-                            <li>"Expense on Activities  : INR {budget['activities_total']}</li>
-                            <li>"Miscellaneous Expenditure  : INR {budget['miscellaneous']}</li>
+                            <li>Expense on Food  : INR {budget['food_total']}</li>
+                            <li>Expense on Transport  : INR {budget['transport_total']}</li>
+                            <li>Expense on Activities  : INR {budget['activities_total']}</li>
+                            <li>Miscellaneous Expenditure  : INR {budget['miscellaneous']}</li>
                             <li><b>Total Expense : INR {total_cost}</b></li>
                         </ul>
                     </div>
